@@ -5,22 +5,22 @@ print('loading ScratchLayer class')
 class ScratchLayer():
 
     def __init__(self, iface, name=u'ScratchLayer', featureType=u'LineString'):
- 
+
         self.name = name
         self.featureType = featureType
-        
-        self.removeAllLayersWithSameName() 
-        (self.layer, self.provider) = self.createLayer(iface, name, featureType)
+
+        self.removeAllLayersWithSameName()
+        (self.layer, self.provider) = self.__createLayer(iface, name, featureType)
 
         self.nextId = 0
 
-        
-    def createLayer(self, iface, name, featureType, addToMap=True):
+
+    def __createLayer(self, iface, name, featureType, addToMap=True):
         featureType += u'?crs=' + iface.mapCanvas().mapSettings().destinationCrs().authid()
         layer = QgsVectorLayer(featureType, name, 'memory')
 
         provider = layer.dataProvider()
-        
+
         fields = []
         fields.append(QgsField(u'id', QVariant.LongLong, 'int8'))
         fields.append(QgsField(u'code', QVariant.String))
@@ -51,7 +51,7 @@ class ScratchLayer():
         feat.setAttributes(attributes)
 
         self.provider.addFeatures([feat])
-        
+
         if refresh:
             self.refresh()
 
@@ -68,9 +68,7 @@ class ScratchLayer():
         layers = QgsProject.instance().mapLayersByName(self.name)
         for layer in layers:
             QgsProject.instance().removeMapLayer(layer.id())
-    
-    
+
+
     def refresh(self):
         iface.mapCanvas().refreshAllLayers()
-
-
